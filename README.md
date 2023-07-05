@@ -27,10 +27,13 @@ docker run -d \
 --privileged \
 --name casjaysdevdocker-radarr \
 --hostname radarr \
+-e PUID=1000 \
+-e PGID=1000 \
 -e TZ=${TIMEZONE:-America/New_York} \
--v $HOME/.local/share/srv/docker/casjaysdevdocker-radarr/rootfs/data:/data:z \
+-v /mnt/movies:/movies:z \
+-v /mnt/downloads:/downloads:z \
 -v $HOME/.local/share/srv/docker/casjaysdevdocker-radarr/rootfs/config:/config:z \
--p 80:80 \
+-p 0.0.0.0:7878:7878 \
 casjaysdevdocker/radarr:latest
 ```
   
@@ -45,11 +48,14 @@ services:
     environment:
       - TZ=America/New_York
       - HOSTNAME=radarr
+      - PUID=1000
+      - PGID=1000
     volumes:
-      - $HOME/.local/share/srv/docker/casjaysdevdocker-radarr/rootfs/data:/data:z
+      - /mnt/movies:/movies:z
+      - /mnt/downloads:/downloads:z
       - $HOME/.local/share/srv/docker/casjaysdevdocker-radarr/rootfs/config:/config:z
     ports:
-      - 80:80
+      - 0.0.0.0:7878:7878
     restart: always
 ```
   

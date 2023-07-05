@@ -12,8 +12,8 @@
 # @@Description      :  Container installer script for radarr
 # @@Changelog        :  New script
 # @@TODO             :  Completely rewrite/refactor/variable cleanup
-# @@Other            :  
-# @@Resource         :  
+# @@Other            :
+# @@Resource         :
 # @@Terminal App     :  no
 # @@sudo/root        :  no
 # @@Template         :  installers/dockermgr
@@ -127,12 +127,16 @@ __docker_is_running || printf_exit "Docker is not running"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Define any pre-install scripts
 __run_pre_install() {
+  [ -d "/mnt/movies" ] || mkdir -p "/mnt/movies"
+  [ -d "/mnt/downloads" ] || mkdir -p "/mnt/downloads"
 
   return 0
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Define any post-install scripts
 run_post_install() {
+  chmod -f 777 "/mnt/movies"
+  chmod -f 777 "/mnt/downloads"
 
   return 0
 }
@@ -163,7 +167,7 @@ done
 # Setup networking
 SET_LAN_DEV=$(__route | sed -e "s/^.*dev.//" -e "s/.proto.*//" | awk '{print $1}' | grep '^' || echo 'eth0')
 SET_DOCKER_IP="$(__docker_gateway_ip || echo '172.17.0.1')"
-SET_LAN_IP=$(__local_lan_ip || echo '127.0.0.1')
+SET_LAN_IP=$(__local_lan_ip || echo '0.0.0.0')
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # get variables from env
 ENV_HOSTNAME="${ENV_HOSTNAME:-$SET_HOSTNAME}"
@@ -218,7 +222,7 @@ CONTAINER_HTML_DIR=""
 CONTAINER_HTML_ENV=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Set container user and group ID - [yes/no] [id] [id]
-USER_ID_ENABLED="no"
+USER_ID_ENABLED="yes"
 CONTAINER_USER_ID=""
 CONTAINER_GROUP_ID=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -331,7 +335,7 @@ CONTAINER_WEB_SERVER_VHOSTS=""
 CONTAINER_ADD_RANDOM_PORTS=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Add custom port -  [exter:inter] or [listen:exter:inter/[tcp,udp]] random:[inter]
-CONTAINER_ADD_CUSTOM_PORT=""
+CONTAINER_ADD_CUSTOM_PORT="0.0.0.0:7878:7878"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # mail settings - [yes/no] [user] [domainname] [server]
 CONTAINER_EMAIL_ENABLED=""
@@ -390,7 +394,7 @@ CONTAINER_ENV_PASS_NAME=""
 CONTAINER_SERVICES_LIST=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Mount container data dir - [yes/no] [/data]
-CONTAINER_MOUNT_DATA_ENABLED="yes"
+CONTAINER_MOUNT_DATA_ENABLED="no"
 CONTAINER_MOUNT_DATA_MOUNT_DIR=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Mount container config dir - [yes/no] [/config]
@@ -398,7 +402,7 @@ CONTAINER_MOUNT_CONFIG_ENABLED="yes"
 CONTAINER_MOUNT_CONFIG_MOUNT_DIR=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Define additional mounts - [/dir:/dir,/otherdir:/otherdir]
-CONTAINER_MOUNTS=""
+CONTAINER_MOUNTS="/mnt/movies:/movies,/mnt/downloads:/downloads"
 CONTAINER_MOUNTS+=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Define additional devices - [/dev:/dev,/otherdev:/otherdev]
