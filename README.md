@@ -19,9 +19,9 @@ dockermgr update radarr
 ## Install and run container
   
 ```shell
-mkdir -p "$HOME/.local/share/srv/docker/radarr/rootfs"
+mkdir -p "$HOME/.local/share/srv/docker/radarr/volumes"
 git clone "https://github.com/dockermgr/radarr" "$HOME/.local/share/CasjaysDev/dockermgr/radarr"
-cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/radarr/rootfs/." "$HOME/.local/share/srv/docker/radarr/rootfs/"
+cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/radarr/volumes/." "$HOME/.local/share/srv/docker/radarr/volumes/"
 docker run -d \
 --restart always \
 --privileged \
@@ -32,7 +32,7 @@ docker run -d \
 -e TZ=${TIMEZONE:-America/New_York} \
 -v /mnt/movies:/movies:z \
 -v /mnt/downloads:/downloads:z \
--v $HOME/.local/share/srv/docker/casjaysdevdocker-radarr/rootfs/config:/config:z \
+-v $HOME/.local/share/srv/docker/casjaysdevdocker-radarr/volumes/config:/config:z \
 -p 0.0.0.0:7878:7878 \
 casjaysdevdocker/radarr:latest
 ```
@@ -53,7 +53,7 @@ services:
     volumes:
       - /mnt/movies:/movies:z
       - /mnt/downloads:/downloads:z
-      - $HOME/.local/share/srv/docker/casjaysdevdocker-radarr/rootfs/config:/config:z
+      - $HOME/.local/share/srv/docker/casjaysdevdocker-radarr/volumes/config:/config:z
     ports:
       - 0.0.0.0:7878:7878
     restart: always
